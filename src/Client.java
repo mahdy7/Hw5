@@ -1,6 +1,4 @@
-import java.util.Date;
 import java.util.Random;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class Client implements Runnable{
     private PrintQueue  listOfTasks;

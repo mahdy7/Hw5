@@ -1,20 +1,16 @@
 import java.util.LinkedList;
-import java.util.Date;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class PrintQueue {
     private final int maxSize;
     private int currentSize;
     private LinkedList<PrintJob> queue;
     private boolean finished;
-    private ReentrantLock queueLock;
 
     PrintQueue(int capacity) {
         queue = new LinkedList<>();
         maxSize = capacity;
         currentSize = 0;
         finished = false;
-        queueLock = new ReentrantLock();
     }
 
     public synchronized void enqueue(PrintJob job) throws InterruptedException {
