@@ -1,42 +1,52 @@
 import java.util.LinkedList;
 import java.util.Date;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class PrintQueue {
     private final int maxSize;
     private int currentSize;
     private LinkedList<PrintJob> queue;
     private boolean finished;
+    private ReentrantLock queueLock;
 
     PrintQueue(int capacity) {
         queue = new LinkedList<>();
         maxSize = capacity;
         currentSize = 0;
         finished = false;
+        queueLock = new ReentrantLock();
     }
 
-    public void enqueue(PrintJob job) {
-        while (currentSize == maxSize);
+    public synchronized void enqueue(PrintJob job) throws InterruptedException {
+        if (currentSize == maxSize){
+            wait();
+        }
         queue.add(job);
         currentSize++;
-        System.out.printf("%s [%s] Enqueued %s\n",Time.getDate(),Thread.currentThread().getName(),job.toString());
+        System.out.printf("%s [%s] Enqueued %s\n", Time.getDate(), Thread.currentThread().getName(), job.toString());
+        notifyAll();
     }
 
-    public PrintJob dequeue() {
-        while (queue.isEmpty() && !finished) ;
-        if (queue.isEmpty() && finished)  return null;
+    public synchronized PrintJob dequeue() throws InterruptedException {
+        if (queue.isEmpty() && !finished) {
+            wait();
+        }
+            if (queue.isEmpty() && finished) return null;
 
-        PrintJob job = queue.removeFirst();
-        System.out.printf("%s [%s] Dequeued %s\n",Time.getDate(),Thread.currentThread().getName(),job.toString());
-        currentSize--;
+            PrintJob job = queue.removeFirst();
+            System.out.printf("%s [%s] Dequeued %s\n", Time.getDate(), Thread.currentThread().getName(), job.toString());
+            currentSize--;
+            notifyAll();
 
-        return job;
+            return job;
     }
 
     /**
      * marks the end of the program
      */
-    public void finish(){
+    public synchronized void finish(){
         finished = true;
+        notifyAll();
     }
 
 }

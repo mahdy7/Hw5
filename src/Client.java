@@ -1,11 +1,11 @@
-
 import java.util.Date;
 import java.util.Random;
-
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Client implements Runnable{
     private PrintQueue  listOfTasks;
     private int numberOfTasks;
+    static private int ClientIds = 1;
 
     Client(PrintQueue  listOfTasks, int numberOfTasks) {
         this.numberOfTasks = numberOfTasks;
@@ -14,32 +14,26 @@ public class Client implements Runnable{
 
     @Override
     public void run() {
-        int maxRange = 500,minRange = 100;
-        int sleepTime = new Random().nextInt(maxRange- minRange +1 )+minRange;
-        String threadName = Thread.currentThread().getName();
-        Date now = new Date();
-        String format = String.format("[%04d-%02d-%02d %02d:%02d:%02d]", now.getYear() + 1900, now.getMonth() + 1, now.getDate(), now.getHours(), now.getMinutes(), now.getSeconds());
-        System.out.println(format + threadName + "Client has started");
+        int minRange = 100;
+        int maxRange = 500;
+        int sleepTime = new Random().nextInt(maxRange - minRange +1 )+ minRange;
+        System.out.printf("%s [%s] Client started\n",Time.getDate(), Thread.currentThread().getName());
         for (int i = 0; i < numberOfTasks; i++) {
-            PrintJob job = new PrintJob(i,(i * 7) % 20 + 1,threadName);
-            try{
-            listOfTasks.enqueue(job);}
-            catch(Exception e){
-                Thread.currentThread().interrupt();
-                System.out.println("Client thread interrupted");
-                return;
-            }
-            System.out.println(format + threadName + "submitted" + job);
-            try{
-            Thread.sleep(sleepTime);
-            }
-            catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                System.err.println("Client thread interrupted");
-                return;
-            }
-            System.out.println(format + " " + threadName + " Client finished");
+                PrintJob job = new PrintJob(ClientIds++, (i * 7) % 20 + 1, Thread.currentThread().getName());
+                try {
+                    listOfTasks.enqueue(job);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                System.out.printf("%s [%s] submitted %s\n", Time.getDate(), Thread.currentThread().getName(), job);
+                try {
+                    Thread.sleep(sleepTime);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    System.err.println("Client thread interrupted");
+                    return;
+                }
         }
-
+        System.out.printf("%s [%s] Client finished\n",Time.getDate(), Thread.currentThread().getName());
     }
 }
