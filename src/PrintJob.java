@@ -9,12 +9,19 @@ public class PrintJob {
         this.owner = owner;
     }
 
-    public String getOwner() {
-        return this.owner;
-    }
+    /**
+     * @return the job owner
+     */
+    public String getOwner() {return this.owner;}
 
+    /**
+     * @return the job pages number
+     */
     public int getNumPages() {return this.numPages;}
 
+    /**
+     * @return the form of printing the print job
+     */
     @Override
     public String toString() {
         return "Job " + this.id + " from " + this.owner + ": " + this.numPages + " pages";

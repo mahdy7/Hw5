@@ -6,6 +6,9 @@ public class Spooler implements Runnable {
         this.queue = queue;
     }
 
+    /**
+     * the run function is used by the threads, it print all the jobs the client request with date, thread safe.
+     */
     @Override
     public void run() {
         System.out.printf("%s [%s] Spooler started\n", Time.getDate(), Thread.currentThread().getName());

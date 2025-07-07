@@ -5,11 +5,15 @@ public class Client implements Runnable{
     private int numberOfTasks;
     static private int ClientIds = 1;
 
+
     Client(PrintQueue  listOfTasks, int numberOfTasks) {
         this.numberOfTasks = numberOfTasks;
         this.listOfTasks = listOfTasks;
     }
 
+    /**
+     * run function is used by threads, it adds up all the jobs that client want to be printed
+     */
     @Override
     public void run() {
         int minRange = 100;
