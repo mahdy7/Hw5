@@ -7,7 +7,7 @@ public class Spooler implements Runnable {
     }
 
     /**
-     * the run function is used by the threads, it print all the jobs the client request with date, thread safe.
+     * continuously takes jobs from the queue and prints them, stops when the next job is null
      */
     @Override
     public void run() {
@@ -27,7 +27,8 @@ public class Spooler implements Runnable {
                 System.out.printf("%s [%s] Printing %s\n", Time.getDate(), Thread.currentThread().getName(), job);
                 Thread.sleep((long) job.getNumPages() * 20);
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                Thread.currentThread().interrupt();
+                break;
             }
         }
     }

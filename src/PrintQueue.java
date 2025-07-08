@@ -14,12 +14,13 @@ public class PrintQueue {
     }
 
     /**
-     * adding a job to a queue, thread safe
+     * adds a job to the queue, thread safe
+     *
      * @param job the print job
      * @throws InterruptedException if a thread is interrupted
      */
     public synchronized void enqueue(PrintJob job) throws InterruptedException {
-        if (currentSize == maxSize){
+        if (currentSize == maxSize) {
             wait();
         }
         queue.add(job);
@@ -29,12 +30,13 @@ public class PrintQueue {
     }
 
     /**
-     * removing a job from the queue
+     * removes a job from the queue, thread safe
+     *
      * @return the job that has been removed
      * @throws InterruptedException if the thread is interrupted
      */
     public synchronized PrintJob dequeue() throws InterruptedException {
-        if (queue.isEmpty() && !finished)wait();
+        if (queue.isEmpty() && !finished) wait();
         if (queue.isEmpty() && finished) return null;
         PrintJob job = queue.removeFirst();
         System.out.printf("%s [%s] Dequeued %s\n", Time.getDate(), Thread.currentThread().getName(), job.toString());
@@ -47,7 +49,7 @@ public class PrintQueue {
     /**
      * marks the end of the program
      */
-    public synchronized void finish(){
+    public synchronized void finish() {
         finished = true;
         notifyAll();
     }
